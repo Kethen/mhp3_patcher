@@ -37,7 +37,7 @@ jobs:
     - name: Push package artifact
       uses: actions/upload-artifact@v4
       with:
-        name: aemu_${{ env.sha_name }}
+        name: mhp3_patcher_${{ env.sha_name }}
         path: |
            PSP
         if-no-files-found: error
