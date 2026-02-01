@@ -1,0 +1,43 @@
+name: Build package
+
+on: [ push, pull_request, workflow_dispatch ]
+
+jobs:
+  build_pkg:
+    runs-on: ubuntu-24.04
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@v5
+      with:
+        submodules: true
+
+    - name: Install server build deps
+      run: |
+        sudo apt update
+        sudo apt install -y gcc libsqlite3-dev podman
+
+    - name: Download PSP SDK
+      run: |
+        curl -sL https://github.com/pspdev/pspdev/releases/download/v20250601/pspdev-ubuntu-latest-x86_64.tar.gz | tar xvz -C ./
+
+    - name: Set env vars
+      run: |
+        echo "sha_name=$(echo ${GITHUB_SHA} | cut -c1-8)" >> $GITHUB_ENV
+        echo "PSPDEV=${GITHUB_WORKSPACE}/pspdev" >> $GITHUB_ENV
+        echo "${GITHUB_WORKSPACE}/pspdev/bin" >> $GITHUB_PATH
+
+    - name: Build
+      run: |
+        make
+        mkdir -p PSP/GAME/mhp3_patcher
+        mv EBOOT.PBP PSP/GAME/mhp3_patcher/
+        mv PARAM.SFO PSP/GAME/mhp3_patcher/
+
+    - name: Push package artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: aemu_${{ env.sha_name }}
+        path: |
+           PSP
+        if-no-files-found: error
