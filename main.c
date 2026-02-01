@@ -66,10 +66,13 @@ void write_file(SceUID fd, const char *patch_file, int mode) {
 		int i;
 		for(i = 0;i < patch_count;i++) {
 			SceSize patch_len = patch_size[i];
-			if(mode == 1)
+			if(mode == 1){
 				sprintf(message, "Aplicando parche (%i/%i)...", i+1, patch_count);
-			else
+				sprintf(message, "Applying patch (%i/%i)...", i+1, patch_count);
+			}else{
 				sprintf(message, "Quitando parche (%i/%i)...", i+1, patch_count);
+				sprintf(message, "Restoring ISO (%i/%i)...", i+1, patch_count);
+			}
 			pspDebugScreenPrintf(message);
 			int j;
 			sceIoLseek32(fd, patch_offset[i] + DATABIN_OFFSET, PSP_SEEK_SET);
@@ -84,6 +87,7 @@ void write_file(SceUID fd, const char *patch_file, int mode) {
 		sceIoClose(patch_fd);
 	} else {
 		pspDebugScreenPrintf("Archivo de parcheo no encontrado\n");
+		pspDebugScreenPrintf("Cannot open %s\n", patch_file);
 	}
 }
 
@@ -97,10 +101,12 @@ void search(const char *patch_file, int mode) {
 			write_file(fd, patch_file, mode);
 		} else {
 			pspDebugScreenPrintf("data.bin no encontrado dentro del ISO, no se puede parchear\n");
+			pspDebugScreenPrintf("bad ms0:/ISO/MHP3.iso, please dump again\n");
 		}
 		sceIoClose(fd);
 	} else {
 		pspDebugScreenPrintf("ms0:/ISO/MHP3.iso no encontrado\n");
+		pspDebugScreenPrintf("ms0:/ISO/MHP3.iso not found\n");
 	}
 }
 
@@ -108,10 +114,19 @@ int main(int argc, char *argv[])
 {
 	SceCtrlData pad;
 	pspDebugScreenInit();
-	pspDebugScreenPrintf("Parcheador MHP3rd v1.3 - Codestation/Sirius/Bemon!o\n\n");
+	pspDebugScreenPrintf("Parcheador MHP3rd v1.4 - Codestation/Sirius/Bemon!o\n");
+	pspDebugScreenPrintf("MHP3rd Patcher v1.4 - Codestation/Sirius/Bemon!o\n\n");
+
+	pspDebugScreenPrintf("ISO: ms0:/ISO/MHP3.iso\n\n");
+
 	pspDebugScreenPrintf("Presione O parchear la ISO\n");
 	pspDebugScreenPrintf("Presione [] para quitar el parche\n");
-	pspDebugScreenPrintf("Presione X para salir\n");
+	pspDebugScreenPrintf("Presione X para salir\n\n");
+
+	pspDebugScreenPrintf("Press O to apply patch from ms0:/MHP3RD_DATA.BIN\n");
+	pspDebugScreenPrintf("Press [] to restore ISO from ms0:/MHP3RD_RESTORE.BIN\n");
+	pspDebugScreenPrintf("Press X to exit\n");
+
 	while(1) {
 		sceCtrlReadBufferPositive(&pad, 1);
 		if(pad.Buttons & PSP_CTRL_CROSS) {
@@ -127,6 +142,7 @@ int main(int argc, char *argv[])
 		}
 	}
 	pspDebugScreenPrintf("Saliendo en 5 segundos...\n");
+	pspDebugScreenPrintf("Exiting in 5 seconds...\n");
 	sceKernelDelayThread(5000000);
 	sceKernelExitGame();
     return 0;

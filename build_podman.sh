@@ -11,5 +11,6 @@ podman run \
 	-w /work_dir \
 	$TAG \
 	-c "
+make clean
 make
 "
