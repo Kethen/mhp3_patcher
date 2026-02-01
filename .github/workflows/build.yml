@@ -39,5 +39,7 @@ jobs:
       with:
         name: mhp3_patcher_${{ env.sha_name }}
         path: |
-           PSP
+           COPYING
+           PSP/GAME/mhp3_patcher/EBOOT.PBP
+           PSP/GAME/mhp3_patcher/PARAM.SFO
         if-no-files-found: error
