@@ -58,7 +58,6 @@ void fill_tables(SceUID transfd) {
 
 void write_file(SceUID fd, const char *patch_file, int mode) {
 	unsigned char buffer[1024];
-	char message[64];
 	SceUID patch_fd;
 	if((patch_fd = sceIoOpen(patch_file, PSP_O_RDONLY, 0777)) >= 0) {
 		fill_tables(patch_fd);
@@ -67,13 +66,12 @@ void write_file(SceUID fd, const char *patch_file, int mode) {
 		for(i = 0;i < patch_count;i++) {
 			SceSize patch_len = patch_size[i];
 			if(mode == 1){
-				sprintf(message, "Aplicando parche (%i/%i)...", i+1, patch_count);
-				sprintf(message, "Applying patch (%i/%i)...", i+1, patch_count);
+				pspDebugScreenPrintf("Aplicando parche (%i/%i)...", i+1, patch_count);
+				pspDebugScreenPrintf("Applying patch (%i/%i)...", i+1, patch_count);
 			}else{
-				sprintf(message, "Quitando parche (%i/%i)...", i+1, patch_count);
-				sprintf(message, "Restoring ISO (%i/%i)...", i+1, patch_count);
+				pspDebugScreenPrintf("Quitando parche (%i/%i)...", i+1, patch_count);
+				pspDebugScreenPrintf("Restoring ISO (%i/%i)...", i+1, patch_count);
 			}
-			pspDebugScreenPrintf(message);
 			int j;
 			sceIoLseek32(fd, patch_offset[i] + DATABIN_OFFSET, PSP_SEEK_SET);
 			for(j = 0; j < patch_len; j+= 1024) {
