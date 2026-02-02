@@ -12,11 +12,6 @@ jobs:
       with:
         submodules: true
 
-    - name: Install server build deps
-      run: |
-        sudo apt update
-        sudo apt install -y gcc libsqlite3-dev podman
-
     - name: Download PSP SDK
       run: |
         curl -sL https://github.com/pspdev/pspdev/releases/download/v20250601/pspdev-ubuntu-latest-x86_64.tar.gz | tar xvz -C ./
