@@ -1,16 +1,11 @@
-TAG="mhp3_patcher_pspsdk"
-
-if ! podman image exists $TAG
-then
-	podman image build -t $TAG -f Dockerfile
-fi
+TAG="ghcr.io/pspdev/pspdev:v20260201"
 
 podman run \
 	--rm -it \
 	-v ./:/work_dir \
 	-w /work_dir \
 	$TAG \
-	-c "
+	bash -c "
 make clean
 make
 "

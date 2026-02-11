@@ -12,19 +12,14 @@ jobs:
       with:
         submodules: true
 
-    - name: Download PSP SDK
-      run: |
-        curl -sL https://github.com/pspdev/pspdev/releases/download/v20250601/pspdev-ubuntu-latest-x86_64.tar.gz | tar xvz -C ./
-
     - name: Set env vars
       run: |
         echo "sha_name=$(echo ${GITHUB_SHA} | cut -c1-8)" >> $GITHUB_ENV
-        echo "PSPDEV=${GITHUB_WORKSPACE}/pspdev" >> $GITHUB_ENV
-        echo "${GITHUB_WORKSPACE}/pspdev/bin" >> $GITHUB_PATH
+        echo "PSPDEV_TAG=ghcr.io/pspdev/pspdev:v20260201" >> $GITHUB_ENV
 
     - name: Build
       run: |
-        make
+        docker run --rm -i -v ./:/work_dir -w /work_dir "$PSPDEV_TAG" make
         mkdir -p PSP/GAME/mhp3_patcher
         mv EBOOT.PBP PSP/GAME/mhp3_patcher/
         mv PARAM.SFO PSP/GAME/mhp3_patcher/
